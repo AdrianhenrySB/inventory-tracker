@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
 
 const CATEGORIES = ["All", "Laptops", "Monitors", "Keyboards & Mice", "Headsets", "Docking Stations", "Cables & Adapters", "Storage", "Other"];
 
@@ -24,7 +24,13 @@ const fmt = (n) => `$${Number(n).toLocaleString("en-US", { minimumFractionDigits
 const emptyForm = { name: "", sku: "", category: "Laptops", qty: "", lowStock: "", cost: "", price: "" };
 
 export default function App() {
-  const [items, setItems] = useState(SAMPLE);
+  const [items, setItems] = useState(() => {
+  const saved = localStorage.getItem('inventory-items');
+  return saved ? JSON.parse(saved) : SAMPLE;
+});
+useEffect(() => {
+  localStorage.setItem('inventory-items', JSON.stringify(items));
+}, [items]);
   const [search, setSearch] = useState("");
   const [catFilter, setCatFilter] = useState("All");
   const [stockFilter, setStockFilter] = useState("all");
